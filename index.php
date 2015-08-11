@@ -15,6 +15,7 @@ $core_path = 'core';
  */
 $app_folder = "app";
 $controller_folder = "controller";
+$view_folder = "view";
 
 /**
  * deal path
@@ -24,9 +25,9 @@ if (realpath($core_path) !== FALSE) {
 }
 $core_path = rtrim($core_path, '/').'/';
 define('COREPATH', str_replace("\\", "/", $core_path));
-
-define('APPPATH', realpath($app_folder).'/');
+define('APPPATH', rtrim(realpath($app_folder)).'/');
 define('CONTROLLERPATH', APPPATH.$controller_folder.'/');
+define('VIEWPATH', APPPATH.$view_folder.'/');
 
 
 require_once COREPATH.'/boot.php';

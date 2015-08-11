@@ -12,7 +12,12 @@ include_once COREPATH.'common.php';
 // read config
 // find required class and method
 //var_dump($_SERVER);
-list($path, $class, $method) = parseUri($_SERVER['REQUEST_URI']);
-$c = findController($class, $path);
-$c->_execute($method);
+$parsed = parseUri($_SERVER['REQUEST_URI']);
+if (is_array($parsed)) {
+    list($path, $class, $method) = $parsed;
+    $c = findController($class, $path);
+    $c->_execute($method);
+} else {
+    show404();
+}
 // execute controller

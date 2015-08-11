@@ -36,17 +36,37 @@ function loadClass($classType, $className, $path = '') {
  */
 function parseUri($url) {
     $divided_path = explode('/', trim(parse_url($url)['path'], '/'));
-    $method = "index";
-    $class = "";
-    $path = "";
+    $method = "index"; // default method
+    $class = "Welcome"; // default controller
+    $path = "";         // default path
     $length = count($divided_path);
-    if ($length == 0) {
-        return array("/", "Index");
-    } else if ($length == 1) {
-        if (! is_file(CONTROLLERPATH.ucfirst($path).".php")){
-            $class = ucfirst($divided_path[$length - 1]);
+    var_dump($divided_path);
+    if ($length == 1) {
+        if ($divided_path[0] == "") {
+            return array($path, $class, $method);
+        } else if (is_file(CONTROLLERPATH.ucfirst($divided_path[0]).".php")){
+            $class = ucfirst($divided_path[0]);
+        } else {
+            $class = '';
         }
     } else {
+        $tmpClass = ucfirst($divided_path[$length - 1]);
+        $tmpPath = trim(substr($url, 0, strripos($url,$tmpClass)), '/');
+        if (is_file(CONTROLLERPATH.$tmpPath."/".$tmpClass.".php")) {
+            $class = $tmpClass;
+            $path = $tmpPath;
+        } else {
+            $tmpMethod = $divided_path[$length - 1];
+            $tmpClass = ucfirst($divided_path[$length - 2]);
+            $tmpPath = trim(substr($tmpPath, 0, strripos($tmpPath,'/')), '/');
+            if (is_file(CONTROLLERPATH.$tmpPath."/".$tmpClass.".php")) {
+                $class = $tmpClass;
+                $path = $tmpPath;
+                $method = $tmpMethod;
+            } else {
+                $class = "";
+            }
+        }/*
         for ($i = 1; $i < $length && $i <= 2; $i++) {
             $path = trim(substr($url, 0, strripos($url, $divided_path[$length - $i - 1])).$divided_path[$length - $i - 1], '/');
             if (is_dir(CONTROLLERPATH.$path)) {
@@ -59,10 +79,11 @@ function parseUri($url) {
                 $method = $divided_path[$length - $i - 1];
                 break;
             }
-        }
+        }*/
     }
     if ($class == "") {
         // echo "Cannot parse url.";
+        return false;
     }
     // echo $path.'  '.$class.'  '.$method."<br>";
     return array($path, $class, $method);
@@ -74,5 +95,10 @@ function findController($c, $path = '') {
 
     loadClass("Controller", $c, $path);
     return new $c;
+}
+
+function show404() {
+    echo "<h1>404</h1>";
+    return "404";
 }
 

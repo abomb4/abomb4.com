@@ -1,0 +1,2 @@
+tttttttttttttttttttttttttttttttttttttttttttt
+<?php echo $x;?>
